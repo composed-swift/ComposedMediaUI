@@ -80,7 +80,10 @@ extension MediaAssetSection {
             multiplier = 0.75
         }
 
-        let prefersLargerContent = contentSize.width > UIScreen.main.bounds.width / 2
+        let prefersLargerContent = traitCollection.userInterfaceIdiom == .pad
+            ? contentSize.width > UIScreen.main.bounds.width / 2
+            : UIScreen.main.nativeBounds.width > UIScreen.main.nativeBounds.height
+        
         let preferredWidth: CGFloat = prefersLargerContent ? 190 : 120
         let count = Int(floor(contentSize.width / preferredWidth * multiplier))
 
@@ -108,6 +111,7 @@ extension MediaAssetSection: CompositionalLayoutHandler {
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = spacing
+        section.contentInsets = NSDirectionalEdgeInsets(top: spacing, leading: spacing, bottom: spacing, trailing: spacing)
 
         return section
     }
