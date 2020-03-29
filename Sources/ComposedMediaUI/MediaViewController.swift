@@ -58,7 +58,6 @@ open class MediaViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
         imageManager.stopCachingImagesForAllAssets()
 
-        /// Required specifically for `UICollectionViewFlowLayout` since some rotations don't cause an invalidation!?
         if layout is UICollectionViewFlowLayout {
             collectionCoordinator?.invalidateLayout()
         }
