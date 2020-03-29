@@ -51,7 +51,7 @@ extension MediaAssetSection {
 extension MediaAssetSection: CollectionSectionProvider {
 
     public func section(with traitCollection: UITraitCollection) -> CollectionSection {
-        let cell = CollectionCellElement(section: self, dequeueMethod: .fromClass(MediaAssetCell.self)) { cell, index, section in
+        let cell = CollectionCellElement(section: self, dequeueMethod: .fromClass(MediaAssetCell.self), configure: { cell, index, section in
             let config = section.configuration
             let asset = section.element(at: index)
 
@@ -63,10 +63,10 @@ extension MediaAssetSection: CollectionSectionProvider {
                 }
             }
 
-            cell.prepareAsset(asset) {
+            cell.prepareAsset(asset, onReuse: {
                 section.imageManager.cancelImageRequest(imageRequestId)
-            }
-        }
+            })
+        })
 
         return CollectionSection(section: self, cell: cell)
     }
@@ -152,10 +152,6 @@ extension MediaAssetSection: CollectionSelectionHandler {
 }
 
 extension MediaAssetSection: CollectionEditingHandler {
-
-    public func allowsEditing(at index: Int) -> Bool {
-        return index != 0
-    }
 
     public func setEditing(_ editing: Bool) {
         allowsMultipleSelection = editing
