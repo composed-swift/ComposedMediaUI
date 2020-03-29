@@ -9,6 +9,7 @@ open class MediaAssetSection: MediaSection<PHAsset> {
 
     private let configuration: Configuration
     private let imageManager: PHCachingImageManager
+    public private(set) var allowsMultipleSelection: Bool = false
 
     private lazy var metrics: CollectionFlowLayoutMetrics = .init()
 
@@ -94,6 +95,10 @@ extension MediaAssetSection {
         return traitCollection.horizontalSizeClass == .compact ? 1 : 10
     }
 
+    private func inset(for contentSize: CGSize, traitCollection: UITraitCollection) -> CGFloat {
+        return traitCollection.horizontalSizeClass == .compact ? 0 : 1
+    }
+
 }
 
 @available(iOS 13.0, *)
@@ -111,7 +116,9 @@ extension MediaAssetSection: CompositionalLayoutHandler {
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = spacing
-        section.contentInsets = NSDirectionalEdgeInsets(top: spacing, leading: spacing, bottom: spacing, trailing: spacing)
+        
+        let inset = self.inset(for: environment.container.contentSize, traitCollection: environment.traitCollection)
+        section.contentInsets = NSDirectionalEdgeInsets(top: inset, leading: inset, bottom: inset, trailing: inset)
 
         return section
     }
@@ -132,6 +139,31 @@ extension MediaAssetSection: CollectionFlowLayoutHandler {
     public func sizingStrategy(at index: Int, metrics: CollectionFlowLayoutMetrics, environment: CollectionFlowLayoutEnvironment) -> CollectionFlowLayoutSizingStrategy? {
         let columnCount = self.columnCount(for: environment.contentSize, traitCollection: environment.traitCollection)
         return CollectionFlowLayoutSizingStrategy(prototype: nil, columnCount: columnCount, sizingMode: .aspect(ratio: 1), metrics: metrics)
+    }
+
+}
+
+extension MediaAssetSection: CollectionSelectionHandler {
+
+    public func didSelect(at index: Int) {
+
+    }
+
+}
+
+extension MediaAssetSection: CollectionEditingHandler {
+
+    public func allowsEditing(at index: Int) -> Bool {
+        return index != 0
+    }
+
+    public func setEditing(_ editing: Bool) {
+        allowsMultipleSelection = editing
+    }
+
+    public func setEditing(_ editing: Bool, at index: Int, cell: UICollectionViewCell, animated: Bool) {
+        guard let cell = cell as? MediaAssetCell else { return }
+        cell.isEditing = editing
     }
 
 }

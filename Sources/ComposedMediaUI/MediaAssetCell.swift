@@ -15,6 +15,10 @@ final class MediaAssetCell: UICollectionViewCell {
     private(set) weak var asset: PHAsset?
     private(set) var onReuse: (() -> Void)?
 
+    internal var isEditing: Bool = false {
+        didSet { setSelected(isSelected) }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         prepare()
@@ -22,6 +26,17 @@ final class MediaAssetCell: UICollectionViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override var isSelected: Bool {
+        didSet { setSelected(isSelected) }
+    }
+
+    private func setSelected(_ selected: Bool) {
+        let t = CATransition()
+        t.duration = 0.1
+        imageView.layer.add(t, forKey: nil)
+        imageView.alpha = isEditing && selected ? 0.5 : 1
     }
 
     private func prepare() {
@@ -55,6 +70,8 @@ final class MediaAssetCell: UICollectionViewCell {
         imageView.image = nil
         asset = nil
         onReuse = nil
+
+        setSelected(false)
     }
 
     deinit {
