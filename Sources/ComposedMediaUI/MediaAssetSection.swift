@@ -144,11 +144,7 @@ extension MediaAssetSection: CollectionFlowLayoutHandler {
 }
 
 extension MediaAssetSection: CollectionSelectionHandler {
-
-    public func didSelect(at index: Int) {
-
-    }
-
+    public func didSelect(at index: Int) { }
 }
 
 extension MediaAssetSection: CollectionEditingHandler {

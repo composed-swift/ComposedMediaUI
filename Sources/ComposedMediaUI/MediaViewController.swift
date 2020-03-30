@@ -186,6 +186,7 @@ extension MediaViewController: UICollectionViewDelegate {
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if !isEditing { open(nil) } // if we're not editing, then we're single-selection
         updateNavigationItems(editing: isEditing, animated: false)
     }
 
