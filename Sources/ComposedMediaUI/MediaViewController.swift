@@ -96,7 +96,18 @@ open class MediaViewController: UIViewController {
     }
 
     @objc private func open(_ sender: Any?) {
-        pickerDelegate?.mediaPicker(self, didPickAssets: [])
+        var assets: [PHAsset] = []
+        let sections = collectionCoordinator?.sectionProvider.sections ?? []
+
+        for section in sections {
+            if let assetSection = section as? MediaAssetSection {
+                assets.append(contentsOf: assetSection.selectedIndexes.map { assetSection.element(at: $0) })
+            }
+
+            #warning("When we're dealing with a collection, we could import ALL assets in that collection?")
+        }
+
+        pickerDelegate?.mediaPicker(self, didPickAssets: assets)
     }
 
     @objc private func cancel(_ sender: Any?) {
