@@ -149,7 +149,7 @@ extension MediaAssetSection: CollectionSelectionHandler {
 
 extension MediaAssetSection: CollectionEditingHandler {
 
-    public func setEditing(_ editing: Bool) {
+    public func didSetEditing(_ editing: Bool) {
         allowsMultipleSelection = editing
     }
 
