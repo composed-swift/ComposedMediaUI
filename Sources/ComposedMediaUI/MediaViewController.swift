@@ -93,11 +93,21 @@ open class MediaViewController: UIViewController {
 
         collectionCoordinator?.setEditing(editing, animated: animated)
         updateNavigationItems(editing: editing, animated: animated)
-        navigationController?.setToolbarHidden(!editing, animated: animated)
     }
 
     @objc private func open(_ sender: Any?) {
-        pickerDelegate?.mediaPicker(self, didPickAssets: [])
+        var assets: [PHAsset] = []
+        let sections = collectionCoordinator?.sectionProvider.sections ?? []
+
+        for section in sections {
+            if let assetSection = section as? MediaAssetSection {
+                assets.append(contentsOf: assetSection.selectedIndexes.map { assetSection.element(at: $0) })
+            }
+
+            #warning("When we're dealing with a collection, we could import ALL assets in that collection?")
+        }
+
+        pickerDelegate?.mediaPicker(self, didPickAssets: assets)
     }
 
     @objc private func cancel(_ sender: Any?) {
@@ -131,7 +141,11 @@ open class MediaViewController: UIViewController {
             navigationItem.rightBarButtonItems?.last?.isEnabled = collectionView.indexPathsForSelectedItems?.isEmpty == false
         }
 
-        navigationItem.title = editing ? "Select Items" : title
+        navigationItem.title = editing
+            ? collectionView.indexPathsForSelectedItems?.isEmpty == true
+                ? NSLocalizedString("Select Items", comment: "")
+                : "\(collectionView.indexPathsForSelectedItems?.count ?? 0) \(NSLocalizedString("Selected", comment: ""))"
+            : title
     }
 
     @objc private func performSelectAll(_ sender: Any?) {
@@ -152,7 +166,6 @@ open class MediaViewController: UIViewController {
 
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        imageManager.stopCachingImagesForAllAssets()
 
         if layout is UICollectionViewFlowLayout {
             collectionCoordinator?.invalidateLayout()
@@ -168,7 +181,12 @@ open class MediaViewController: UIViewController {
 
 extension MediaViewController: UICollectionViewDelegate {
 
+    public func collectionView(_ collectionView: UICollectionView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if !isEditing { open(nil) } // if we're not editing, then we're single-selection
         updateNavigationItems(editing: isEditing, animated: false)
     }
 
