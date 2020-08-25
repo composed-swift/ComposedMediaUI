@@ -138,7 +138,7 @@ extension MediaAssetSection: CollectionFlowLayoutHandler {
 
     public func sizingStrategy(at index: Int, metrics: CollectionFlowLayoutMetrics, environment: CollectionFlowLayoutEnvironment) -> CollectionFlowLayoutSizingStrategy? {
         let columnCount = self.columnCount(for: environment.contentSize, traitCollection: environment.traitCollection)
-        return CollectionFlowLayoutSizingStrategy(prototype: nil, columnCount: columnCount, sizingMode: .aspect(ratio: 1), metrics: metrics)
+        return CollectionFlowLayoutSizingStrategy(columnCount: columnCount, sizingMode: .aspect(ratio: 1), metrics: metrics)
     }
 
 }
@@ -153,7 +153,7 @@ extension MediaAssetSection: CollectionEditingHandler {
         allowsMultipleSelection = editing
     }
 
-    public func setEditing(_ editing: Bool, at index: Int, cell: UICollectionViewCell, animated: Bool) {
+    public func didSetEditing(_ editing: Bool, at index: Int, cell: UICollectionViewCell, animated: Bool) {
         guard let cell = cell as? MediaAssetCell else { return }
         cell.isEditing = editing
     }

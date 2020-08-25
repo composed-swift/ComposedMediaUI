@@ -64,10 +64,8 @@ final class MediaAssetCell: UICollectionViewCell {
                 ? UIImage(systemName: "checkmark.circle.fill")
                 : nil
         } else {
-            // ✓
-//            selectionImageView.image = selected
-//            ? UIImage(systemName: "circle.fill")
-//            : nil
+            selectionImageView.backgroundColor = selected ? .white : .clear
+            selectionImageView.layer.cornerRadius = selectionImageView.bounds.width / 2
         }
     }
 
