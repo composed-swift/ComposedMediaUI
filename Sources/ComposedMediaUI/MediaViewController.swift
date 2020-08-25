@@ -57,6 +57,15 @@ open class MediaViewController: UIViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
 
+        let provider = ComposedSectionProvider()
+        let options = PHFetchOptions()
+        options.sortDescriptors = [NSSortDescriptor(keyPath: \PHAsset.creationDate, ascending: false)]
+
+        provider.append(MediaAssetSection(fetchResult: PHAsset.fetchAssets(with: options), imageManager: imageManager))
+        collectionCoordinator = CollectionCoordinator(collectionView: collectionView, sectionProvider: provider)
+
+        updateNavigationItems(editing: false, animated: false)
+
         if #available(iOS 13.0, *) {
             collectionView.backgroundColor = .systemBackground
         } else {
@@ -69,15 +78,6 @@ open class MediaViewController: UIViewController {
         collectionView.delegate = self
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(collectionView)
-
-        let provider = ComposedSectionProvider()
-        let options = PHFetchOptions()
-        options.sortDescriptors = [NSSortDescriptor(keyPath: \PHAsset.creationDate, ascending: false)]
-
-        provider.append(MediaAssetSection(fetchResult: PHAsset.fetchAssets(with: options), imageManager: imageManager))
-        collectionCoordinator = CollectionCoordinator(collectionView: collectionView, sectionProvider: provider)
-
-        updateNavigationItems(editing: false, animated: false)
     }
 
     @objc private func beginEditing(_ sender: Any?) {
